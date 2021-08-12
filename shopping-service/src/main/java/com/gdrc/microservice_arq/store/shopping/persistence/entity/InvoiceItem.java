@@ -22,10 +22,6 @@ public class InvoiceItem {
     @Column(name = "product_id")
     private Long productId;
 
-    @ManyToOne
-    @JoinColumn(name = "invoice_id", nullable = false, updatable = false)
-    private Invoice invoice;
-
     @Transient
     private Double subTotal;
 

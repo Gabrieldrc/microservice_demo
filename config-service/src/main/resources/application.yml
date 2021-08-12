@@ -7,6 +7,7 @@ spring:
         git:
           uri: https://github.com/Gabrieldrc/microservice_demo.git
           searchPaths: config-data
+          default-label: main
           username: ${GIT_USER}
           password: ${GIT_PASSWORD}
   security:
