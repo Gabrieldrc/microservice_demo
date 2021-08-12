@@ -1,2 +1,15 @@
 server:
   port: 8081
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Gabrieldrc/microservice_demo.git
+          searchPath: config-data
+          username: ${GIT_USER}
+          password: ${GIT_PASSWORD}
+  security:
+    user:
+      name: rott
+      password: s3cr3t
