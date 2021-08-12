@@ -11,5 +11,5 @@ spring:
           password: ${GIT_PASSWORD}
   security:
     user:
-      name: rott
+      name: root
       password: s3cr3t
