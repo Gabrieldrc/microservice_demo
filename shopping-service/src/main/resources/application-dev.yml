@@ -1,0 +1,25 @@
+server:
+  port: 8093
+  error:
+    include-message: always
+    include-binding-errors: always
+spring:
+  datasource:
+    drive-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:8079/shopping-service
+    username: postgres
+    password: example
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQL82Dialect
+    properties:
+      hibernate:
+        use_sql_comments: false
+        show_sql: true
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQL82Dialect
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
