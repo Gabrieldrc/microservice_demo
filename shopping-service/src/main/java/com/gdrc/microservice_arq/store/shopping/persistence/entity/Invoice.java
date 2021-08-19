@@ -1,11 +1,11 @@
 package com.gdrc.microservice_arq.store.shopping.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.gdrc.microservice_arq.store.shopping.model.Customer;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,15 +31,14 @@ public class Invoice {
 
     @Valid
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "invoice_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinColumn(name = "invoice_id", nullable = false)
     private List<InvoiceItem> items;
 
     private String state;
 
-    public Invoice() {
-        items = new ArrayList<>();
-    }
+    @Transient
+    private Customer customer;
 
     @PrePersist
     public void prePersist() {

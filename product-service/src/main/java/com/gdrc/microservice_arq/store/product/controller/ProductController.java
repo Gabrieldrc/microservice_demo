@@ -57,6 +57,9 @@ public class ProductController {
         if (result.hasErrors()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
         }
+        if (product.getId() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id propertie of the product most be null");
+        }
         Product productCreated = productService.createProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(productCreated);
     }
@@ -80,8 +83,15 @@ public class ProductController {
     }
 
     @GetMapping(value = "/{id}/stock")
-    public ResponseEntity<Product> updateStockProduct(@PathVariable(name = "id") Long id, @RequestParam(name = "quantity") Double quantity) {
-        Product product = productService.updateStock(id, quantity);
+    public ResponseEntity updateStockProduct(@PathVariable(name = "id") Long id, @RequestParam(name = "quantity") Double quantity) {
+        Product product = null;
+        try {
+            product = productService.updateStock(id, quantity);
+        } catch (Exception e) {
+            HashMap<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
         if (product == null) {
             return ResponseEntity.notFound().build();
         }

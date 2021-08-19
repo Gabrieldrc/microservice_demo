@@ -66,13 +66,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateStock(Long id, Double quantity) {
+    public Product updateStock(Long id, Double quantity) throws Exception {
         Optional<Product> result = this.getProduct(id);
         if (result.isEmpty()) {
             return null;
         }
         Product productDb = result.get();
-        productDb.setStock(quantity);
+        double newStock = productDb.getStock() + quantity;
+        if (newStock < 0) {
+            throw new Exception("Quantity is not permitted. Should be less than or equal to " + productDb.getStock());
+        }
+        productDb.setStock(newStock);
         return repository.save(productDb);
     }
 }
