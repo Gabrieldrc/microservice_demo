@@ -38,4 +38,4 @@ management:
         include: "*"
 hystrix:
   dashboard:
-    proxyStreamAllowList: "*"
+    proxy-stream-allow-list: "*"
