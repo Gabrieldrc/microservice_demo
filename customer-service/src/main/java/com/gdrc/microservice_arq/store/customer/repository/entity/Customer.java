@@ -1,6 +1,7 @@
 package com.gdrc.microservice_arq.store.customer.repository.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 
 @Data
 @Entity
+@Builder
 @Table(name = "customers")
 public class Customer implements Serializable {
     @Id

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -26,40 +27,42 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer createCustomer(Customer customer) {
-        Customer customerDB = repository.findByIdNumber(customer.getIdNumber());
-        if (customerDB != null) {
-            return customerDB;
+        Optional<Customer> result = repository.findByIdNumber(customer.getIdNumber());
+        if (result.isPresent()) {
+            return result.get();
         }
         customer.setState("CREATED");
-        customerDB = repository.save(customer);
+        Customer customerDB = repository.save(customer);
         return customerDB;
     }
 
     @Override
-    public Customer updateCustomer(Customer customer) {
-        Customer customerDB = getCustomer(customer.getId());
-        if (customerDB == null) {
-            return null;
+    public Optional<Customer> updateCustomer(Customer customer) {
+        Optional<Customer> result = getCustomer(customer.getId());
+        if (result.isEmpty()) {
+            return Optional.empty();
         }
+        Customer customerDB = result.get();
         customerDB.setFirstName(customer.getFirstName());
         customerDB.setLastName(customer.getLastName());
         customerDB.setEmail(customer.getEmail());
         customerDB.setPhotoUrl(customer.getPhotoUrl());
-        return repository.save(customerDB);
+        return Optional.of(repository.save(customerDB));
     }
 
     @Override
-    public Customer deleteCustomer(Customer customer) {
-        Customer customerDB = getCustomer(customer.getId());
-        if (customerDB == null) {
-            return null;
+    public Optional<Customer> deleteCustomer(Customer customer) {
+        Optional<Customer> result = getCustomer(customer.getId());
+        if (result.isEmpty()) {
+            return Optional.empty();
         }
-        customer.setState("DELETED");
-        return repository.save(customer);
+        Customer customerDB = result.get();
+        customerDB.setState("DELETED");
+        return Optional.of(repository.save(customerDB));
     }
 
     @Override
-    public Customer getCustomer(Long id) {
-        return repository.findById(id).orElse(null);
+    public Optional<Customer> getCustomer(Long id) {
+        return repository.findById(id);
     }
 }

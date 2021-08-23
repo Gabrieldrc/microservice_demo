@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,38 +27,45 @@ public class CustomController {
     private CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<List<Customer>> listAllCustomers(@RequestParam(name = "regionId", required = false) Long regionId) {
-        List<Customer> customers = new ArrayList<>();
-        if (regionId == null) {
-            customers = customerService.findCustomerAll();
-            if (customers.isEmpty()) {
+    public ResponseEntity<List<Customer>> listAllCustomers(
+            @RequestParam(name = "regionId", required = false) Long regionId
+    ) {
+        List<Customer> customerList = new ArrayList<>();
+        if (!isFilterByRegionId(regionId)) {
+            customerList = customerService.findCustomerAll();
+            if (customerList.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
         } else {
             Region region = new Region();
             region.setId(regionId);
-            customers = customerService.findCustomerByRegion(region);
-            if (customers == null) {
+            customerList = customerService.findCustomerByRegion(region);
+            if (customerList.isEmpty()) {
                 log.error("Customers with Region id {} not found.", regionId);
                 return ResponseEntity.notFound().build();
             }
         }
-        return ResponseEntity.ok(customers);
+        return ResponseEntity.ok(customerList);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable("id") Long id) {
+    public ResponseEntity<Customer> getCustomer(
+            @PathVariable("id") Long id
+    ) {
         log.info("Fetching Customer with id {}", id);
-        Customer customer = customerService.getCustomer(id);
-        if (customer == null) {
+        Optional<Customer> result = customerService.getCustomer(id);
+        if (result.isEmpty()) {
             log.error("Customer with id {} not found.", id);
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(customer);
+        return ResponseEntity.ok(result.get());
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer, BindingResult result) {
+    public ResponseEntity<Customer> createCustomer(
+            @Valid @RequestBody Customer customer,
+            BindingResult result
+    ) {
         log.info("Creating Customer: {}", customer);
         if (result.hasErrors()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
@@ -71,28 +75,33 @@ public class CustomController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable("id") long id, @RequestBody Customer customer) {
+    public ResponseEntity<?> updateCustomer(
+            @PathVariable("id") long id,
+            @RequestBody Customer customer
+    ) {
         log.info("Updating Customer with id {}", id);
-        Customer currentCustomer = customerService.getCustomer(id);
-        if (currentCustomer == null) {
+        customer.setId(id);
+        Optional<Customer> result = customerService.updateCustomer(customer);
+        if (result.isEmpty()) {
             log.error("Unable to update. Customer with id {} not found.", id);
             return ResponseEntity.notFound().build();
         }
-        customer.setId(id);
-        currentCustomer = customerService.updateCustomer(customer);
-        return ResponseEntity.ok(currentCustomer);
+        return ResponseEntity.ok(result.get());
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable("id") long id) {
+    public ResponseEntity<Customer> deleteCustomer(
+            @PathVariable("id") long id
+    ) {
         log.info("Fetching & Deleting Customer with id {}", id);
-        Customer customer = customerService.getCustomer(id);
-        if (customer == null) {
+        Optional<Customer> result = customerService.deleteCustomer(
+                Customer.builder().id(id).build()
+        );
+        if (result.isEmpty()) {
             log.error("Unable to delete. Customer with id {} not found.", id);
             return ResponseEntity.notFound().build();
         }
-        customer = customerService.deleteCustomer(customer);
-        return ResponseEntity.ok(customer);
+        return ResponseEntity.ok(result.get());
     }
 
     private String formatMessage(BindingResult result) {
@@ -115,4 +124,9 @@ public class CustomController {
         }
         return jsonString;
     }
+
+    private boolean isFilterByRegionId(Long regionId) {
+        return regionId != null;
+    }
+
 }
