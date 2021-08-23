@@ -2,6 +2,7 @@ package com.gdrc.microservice_arq.store.customer.service;
 
 import com.gdrc.microservice_arq.store.customer.repository.CustomerRepository;
 import com.gdrc.microservice_arq.store.customer.repository.entity.Customer;
+import com.gdrc.microservice_arq.store.customer.repository.entity.CustomerState;
 import com.gdrc.microservice_arq.store.customer.repository.entity.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (result.isPresent()) {
             return result.get();
         }
-        customer.setState("CREATED");
+        customer.setState(CustomerState.CREATED.toString());
         Customer customerDB = repository.save(customer);
         return customerDB;
     }
@@ -57,7 +58,7 @@ public class CustomerServiceImpl implements CustomerService {
             return Optional.empty();
         }
         Customer customerDB = result.get();
-        customerDB.setState("DELETED");
+        customerDB.setState(CustomerState.DELETED.toString());
         return Optional.of(repository.save(customerDB));
     }
 
