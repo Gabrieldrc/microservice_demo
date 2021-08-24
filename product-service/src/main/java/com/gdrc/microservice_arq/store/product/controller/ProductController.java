@@ -28,23 +28,25 @@ public class ProductController {
     public ResponseEntity<List<Product>> listProduct(
             @RequestParam(name = "categoryId", required = false) Long categoryId
     ) {
-        List<Product> products = new ArrayList<>();
-        if (categoryId == null) {
-            products = productService.listAllProduct();
-            if (products.isEmpty()) {
+        List<Product> productList = new ArrayList<>();
+        if (isFilterByCategoryId(categoryId)) {
+            productList = productService.findByCategory(Category.builder().id(categoryId).build());
+            if (productList.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
         } else {
-            products = productService.findByCategory(Category.builder().id(categoryId).build());
-            if (products.isEmpty()) {
+            productList = productService.listAllProduct();
+            if (productList.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
         }
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(productList);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable("id") Long id) {
+    public ResponseEntity<Product> getProduct(
+            @PathVariable("id") Long id
+    ) {
         Optional<Product> result = productService.getProduct(id);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -53,49 +55,60 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product, BindingResult result) {
+    public ResponseEntity<Product> createProduct(
+            @Valid @RequestBody Product product,
+            BindingResult result
+    ) {
         if (result.hasErrors()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
         }
-        if (product.getId() != null) {
+        if (productHasId(product)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id propertie of the product most be null");
         }
-        Product productCreated = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productCreated);
+        Product productDB = productService.createProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productDB);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable(name = "id") Long id, @RequestBody Product product) {
-        Product productDB = productService.updateProduct(product);
-        if (productDB == null) {
+    public ResponseEntity<Product> update(
+            @PathVariable(name = "id") Long id,
+            @RequestBody Product product
+    ) {
+        Optional<Product> result = productService.updateProduct(product);
+        if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(productDB);
+        return ResponseEntity.ok(result.get());
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Product> deleteProduct(@PathVariable("id") Long id) {
-        Product productDelete = productService.deleteProduct(id);
-        if (productDelete == null) {
+    public ResponseEntity<Product> deleteProduct(
+            @PathVariable("id") Long id
+    ) {
+        Optional<Product> result = productService.deleteProduct(id);
+        if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(productDelete);
+        return ResponseEntity.ok(result.get());
     }
 
     @GetMapping(value = "/{id}/stock")
-    public ResponseEntity updateStockProduct(@PathVariable(name = "id") Long id, @RequestParam(name = "quantity") Double quantity) {
-        Product product = null;
+    public ResponseEntity updateStockProduct(
+            @PathVariable(name = "id") Long id,
+            @RequestParam(name = "quantity") Double quantity
+    ) {
+        Optional<Product> result;
         try {
-            product = productService.updateStock(id, quantity);
+            result = productService.updateStock(id, quantity);
         } catch (Exception e) {
             HashMap<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
-        if (product == null) {
+        if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(result.get());
     }
 
     private String formatMessage(BindingResult result) {
@@ -117,5 +130,13 @@ public class ProductController {
             e.printStackTrace();
         }
         return jsonString;
+    }
+
+    private boolean isFilterByCategoryId(Long categoryId) {
+        return categoryId != null;
+    }
+
+    private boolean productHasId(Product product) {
+        return product.getId() != null;
     }
 }
