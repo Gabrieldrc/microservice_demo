@@ -82,7 +82,9 @@ public class InvoiceRest {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Invoice> deleteInvoice(@PathVariable("id") long id) {
+    public ResponseEntity<Invoice> deleteInvoice(
+            @PathVariable("id") long id
+    ) {
         log.info("Fetching & Deleting Invoice with id {}", id);
         Optional<Invoice> invoiceDB = invoiceService.getInvoiceById(id);
         if (invoiceDB.isEmpty()) {
