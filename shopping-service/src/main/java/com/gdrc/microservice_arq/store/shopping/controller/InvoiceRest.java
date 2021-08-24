@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,57 +29,68 @@ public class InvoiceRest {
 
     @GetMapping
     public ResponseEntity<List<Invoice>> listAllInvoices() {
-        List<Invoice> invoices = invoiceService.findInvoiceAll();
-        if (invoices.isEmpty()) {
+        List<Invoice> invoicesList = invoiceService.findInvoiceAll();
+        if (invoicesList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(invoices);
+        return ResponseEntity.ok(invoicesList);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Invoice> getInvoice(@PathVariable("id") long id) {
+    public ResponseEntity<Invoice> getInvoice(
+            @PathVariable("id") long id
+    ) {
         log.info("Fetching Invoice with id {}", id);
-        Invoice invoice = invoiceService.getInvoice(id);
-        if (null == invoice) {
+        Optional<Invoice> result = invoiceService.getInvoiceById(id);
+        if (result.isEmpty()) {
             log.error("Invoice with id {} not found." , id);
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(invoice);
+        return ResponseEntity.ok(result.get());
     }
 
     @PostMapping
-    public ResponseEntity<Invoice> createInvoice(@Valid @RequestBody Invoice invoice, BindingResult result) {
+    public ResponseEntity<Invoice> createInvoice(
+            @Valid @RequestBody Invoice invoice,
+            BindingResult result
+    ) {
         log.info("Creating Invoice: {}", invoice);
         if (result.hasErrors()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    this.formatMessage(result)
+            );
         }
         Invoice invoiceDB = invoiceService.createInvoice(invoice);
         return ResponseEntity.status(HttpStatus.CREATED).body(invoiceDB);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateInvoice(@PathVariable("id") long id, @RequestBody Invoice invoice) {
+    public ResponseEntity<?> updateInvoice(
+            @PathVariable("id") long id,
+            @RequestBody Invoice invoice
+    ) {
         log.info("Updating Invoice with id {}", id);
         invoice.setId(id);
-        Invoice currentInvoice = invoiceService.updateInvoice(invoice);
+        Optional<Invoice> invoiceDB = invoiceService.updateInvoice(invoice);
 
-        if (currentInvoice == null) {
-            log.error("Unable to delete. Invoice with id {} not found.", id);
+        if (invoiceDB.isEmpty()) {
+            log.error("Unable to update. Invoice with id {} not found.", id);
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(currentInvoice);
+        return ResponseEntity.ok(invoiceDB.get());
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Invoice> deleteInvoice(@PathVariable("id") long id) {
         log.info("Fetching & Deleting Invoice with id {}", id);
-        Invoice invoice = invoiceService.getInvoice(id);
-        if (invoice == null) {
+        Optional<Invoice> invoiceDB = invoiceService.getInvoiceById(id);
+        if (invoiceDB.isEmpty()) {
             log.error("Unable to delete. Invoice with id {} not found.", id);
             return ResponseEntity.notFound().build();
         }
-        invoice = invoiceService.deleteInvoice(invoice);
-        return ResponseEntity.ok(invoice);
+        invoiceDB = invoiceService.deleteInvoice(invoiceDB.get());
+        return ResponseEntity.ok(invoiceDB.get());
     }
 
     private String formatMessage(BindingResult result) {

@@ -3,11 +3,12 @@ package com.gdrc.microservice_arq.store.shopping.service;
 import com.gdrc.microservice_arq.store.shopping.persistence.entity.Invoice;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface InvoiceService {
     public List<Invoice> findInvoiceAll();
     public Invoice createInvoice(Invoice invoice);
-    public Invoice updateInvoice(Invoice invoice);
-    public Invoice deleteInvoice(Invoice invoice);
-    public Invoice getInvoice(Long id);
+    public Optional<Invoice> updateInvoice(Invoice invoice);
+    public Optional<Invoice> deleteInvoice(Invoice invoice);
+    public Optional<Invoice> getInvoiceById(Long id);
 }
