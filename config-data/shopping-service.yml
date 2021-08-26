@@ -28,31 +28,6 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8099/eureka
-=======================
-resilience4j:
-  circuitbreaker:
-    instances:
-      customerService:
-        registerHealthIndicator: true
-        eventConsumerBufferSize: 10
-        automaticTransitionFromOpenTohHalfOpenEnabled: true
-        failureRateThreshold: 50
-        minmumNumberOfCalls: 5
-        permitedNumberOfCallsInHalfOpenState: 3
-        slidingWindowSize: 10
-        waitDurationInOpenState: 5s
-        slidingWindowType: COUNT_BASED
-      productService:
-        registerHealthIndicator: true
-        eventConsumerBufferSize: 10
-        automaticTransitionFromOpenTohHalfOpenEnabled: true
-        failureRateThreshold: 50
-        minmumNumberOfCalls: 5
-        permitedNumberOfCallsInHalfOpenState: 3
-        slidingWindowSize: 10
-        waitDurationInOpenState: 5s
-        slidingWindowType: COUNT_BASED
-========================
 resilience4j.circuitbreaker:
     configs:
         default:
@@ -67,8 +42,6 @@ resilience4j.circuitbreaker:
             baseConfig: default
         productService:
             baseConfig: default
-
-========================
 management:
   health:
     circuitbreakers:
@@ -76,4 +49,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: "*"
