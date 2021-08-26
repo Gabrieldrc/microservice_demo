@@ -31,7 +31,17 @@ eureka:
 resilience4j:
   circuitbreaker:
     instances:
-      userService:
+      customerService:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        automaticTransitionFromOpenTohHalfOpenEnabled: true
+        failureRateThreshold: 50
+        minmumNumberOfCalls: 5
+        permitedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        waitDurationInOpenState: 5s
+        slidingWindowType: COUNT_BASED
+      productService:
         registerHealthIndicator: true
         eventConsumerBufferSize: 10
         automaticTransitionFromOpenTohHalfOpenEnabled: true
