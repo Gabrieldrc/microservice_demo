@@ -1,4 +1,4 @@
-package com.gdrc.microservice_arq.store.shopping.service;
+package com.gdrc.microservice_arq.store.shopping.api.service;
 
 import com.gdrc.microservice_arq.store.shopping.persistence.entity.Invoice;
 

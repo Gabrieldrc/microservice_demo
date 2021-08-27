@@ -1,6 +1,6 @@
-package com.gdrc.microservice_arq.store.shopping.client;
+package com.gdrc.microservice_arq.store.shopping.domain.client;
 
-import com.gdrc.microservice_arq.store.shopping.model.Product;
+import com.gdrc.microservice_arq.store.shopping.domain.model.Product;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

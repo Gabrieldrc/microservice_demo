@@ -31,7 +31,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product createProduct(Product product) {
         product.setStatus(ProductStatus.CREATED.toString());
-        product.setCreateAt(new Date());
         return repository.save(product);
     }
 

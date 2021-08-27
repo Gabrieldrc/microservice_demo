@@ -1,9 +1,10 @@
-package com.gdrc.microservice_arq.store.shopping.controller;
+package com.gdrc.microservice_arq.store.shopping.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdrc.microservice_arq.store.shopping.api.dto.ErrorMessage;
 import com.gdrc.microservice_arq.store.shopping.persistence.entity.Invoice;
-import com.gdrc.microservice_arq.store.shopping.service.InvoiceService;
+import com.gdrc.microservice_arq.store.shopping.api.service.InvoiceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

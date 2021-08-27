@@ -1,9 +1,10 @@
-package com.gdrc.microservice_arq.store.shopping.service;
+package com.gdrc.microservice_arq.store.shopping.domain.service;
 
-import com.gdrc.microservice_arq.store.shopping.client.CustomerClient;
-import com.gdrc.microservice_arq.store.shopping.client.ProductClient;
-import com.gdrc.microservice_arq.store.shopping.model.Customer;
-import com.gdrc.microservice_arq.store.shopping.model.Product;
+import com.gdrc.microservice_arq.store.shopping.domain.client.CustomerClient;
+import com.gdrc.microservice_arq.store.shopping.domain.client.ProductClient;
+import com.gdrc.microservice_arq.store.shopping.api.service.InvoiceService;
+import com.gdrc.microservice_arq.store.shopping.domain.model.Customer;
+import com.gdrc.microservice_arq.store.shopping.domain.model.Product;
 import com.gdrc.microservice_arq.store.shopping.persistence.entity.Invoice;
 import com.gdrc.microservice_arq.store.shopping.persistence.entity.InvoiceItem;
 import com.gdrc.microservice_arq.store.shopping.persistence.entity.InvoiceState;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class InvoiceServiceImpl implements InvoiceService{
+public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     private InvoiceRepository invoiceRepository;

@@ -1,6 +1,6 @@
 package com.gdrc.microservice_arq.store.shopping.persistence.entity;
 
-import com.gdrc.microservice_arq.store.shopping.model.Product;
+import com.gdrc.microservice_arq.store.shopping.domain.model.Product;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,7 +15,7 @@ public class InvoiceItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Positive(message = "El stock debe mayor que cero")
+    @Positive(message = "El stock debe ser mayor que cero")
     private Double quantity;
     private Double price;
 

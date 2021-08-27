@@ -1,7 +1,7 @@
 package com.gdrc.microservice_arq.store.shopping.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.gdrc.microservice_arq.store.shopping.model.Customer;
+import com.gdrc.microservice_arq.store.shopping.domain.model.Customer;
 import lombok.Data;
 
 import javax.persistence.*;
