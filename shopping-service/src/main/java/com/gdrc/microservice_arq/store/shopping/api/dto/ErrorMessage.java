@@ -1,4 +1,4 @@
-package com.gdrc.microservice_arq.store.shopping.controller;
+package com.gdrc.microservice_arq.store.shopping.api.dto;
 
 import lombok.Builder;
 import lombok.Getter;

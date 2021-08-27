@@ -1,4 +1,4 @@
-package com.gdrc.microservice_arq.store.shopping.model;
+package com.gdrc.microservice_arq.store.shopping.domain.model;
 
 import lombok.Data;
 
